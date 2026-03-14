@@ -9,4 +9,4 @@ fmt: clean
 vet: fmt
 				go vet ./...
 build: vet
-				go build -o scrappy cmd/scrappy.go
+				go build -o bin/scrappy cmd/scrappy.go
