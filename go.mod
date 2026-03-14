@@ -1,0 +1,3 @@
+module scrappy
+
+go 1.26.1
