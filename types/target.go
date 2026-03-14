@@ -1,6 +1,11 @@
 // Package types
 package types
 
-type Product[T any] interface {
-	Run() []T
+type Product interface {
+	Name() string
+	Price() string
+}
+
+type Scrapees interface {
+	Run() []Product
 }

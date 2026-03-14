@@ -8,13 +8,13 @@ import (
 )
 
 func main() {
-	temp := []types.Product[internal.Simlab]{
-		&internal.Simlab{},
+	scrapees := []types.Scrapees{
+		internal.Simlab{},
 	}
 
-	for _, p := range temp {
-		for _, v := range p.Run() {
-			fmt.Printf("\n%s\n%s\n", v.Name, v.Price)
+	for _, scrapee := range scrapees {
+		for _, product := range scrapee.Run() {
+			fmt.Printf("\n%s\n%s\n", product.Name(), product.Price())
 		}
 	}
 }

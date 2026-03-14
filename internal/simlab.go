@@ -5,27 +5,37 @@ import (
 	"fmt"
 	"strings"
 
+	"scrappy/types"
+
 	"github.com/gocolly/colly/v2"
 )
 
 type Simlab struct {
 	url   string
-	Name  string
-	Price string
+	name  string
+	price string
 }
 
-func NewSimlab() *Simlab {
-	return &Simlab{
+func NewSimlab() Simlab {
+	return Simlab{
 		url: "https://sim-lab.eu/en-pt/collections/sim-racing-cockpits",
 	}
 }
 
-func (sm *Simlab) URL() string {
+func (sm Simlab) URL() string {
 	return sm.url
 }
 
-func (sm *Simlab) Run() []Simlab {
-	cockspits := make([]Simlab, 0, 20)
+func (sm Simlab) Name() string {
+	return sm.name
+}
+
+func (sm Simlab) Price() string {
+	return sm.price
+}
+
+func (sm Simlab) Run() []types.Product {
+	cockspits := make([]types.Product, 0, 20)
 
 	c := colly.NewCollector(
 		colly.CacheDir("./cache/simlab"),
@@ -34,10 +44,10 @@ func (sm *Simlab) Run() []Simlab {
 	c.OnHTML("ul[id='product-grid'] li[class='grid__item']", func(e *colly.HTMLElement) {
 		cockpit := NewSimlab()
 
-		cockpit.Name = strings.Split(strings.TrimSpace(e.ChildText("h3 a")), "\n")[0]
-		cockpit.Price = strings.TrimSpace(e.ChildText("div[class='price__regular'] span:last-child"))
+		cockpit.name = strings.Split(strings.TrimSpace(e.ChildText("h3 a")), "\n")[0]
+		cockpit.price = strings.TrimSpace(e.ChildText("div[class='price__regular'] span:last-child"))
 
-		cockspits = append(cockspits, *cockpit)
+		cockspits = append(cockspits, cockpit)
 	})
 
 	c.OnRequest(func(r *colly.Request) {
