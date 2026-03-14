@@ -2,39 +2,46 @@ package main
 
 import (
 	"fmt"
-	"regexp"
+	"strings"
 
 	"github.com/gocolly/colly/v2"
+
+	i "scrappy/internal"
 )
 
-const url = "https://eu.store.bambulab.com/products/a1?from=navigation&id=599117150694776840"
-
-var re = regexp.MustCompile(`(\d)+\sEUR`)
-
 func main() {
+	cockspits := make([]*i.Simlab, 0, 20)
+
 	c := colly.NewCollector(
-		colly.CacheDir("./cache/bbl"),
+		colly.CacheDir("./cache/simlab"),
 	)
 
-	c.OnHTML("span", func(h *colly.HTMLElement) {
-		if re.MatchString(h.Text) {
-			fmt.Printf("Price: %v\n", h.Text)
-		}
+	c.OnHTML("ul[id='product-grid'] li[class='grid__item']", func(e *colly.HTMLElement) {
+		cockpit := i.NewSimlab()
+
+		cockpit.Name = strings.Split(strings.TrimSpace(e.ChildText("h3 a")), "\n")[0]
+		cockpit.Price = strings.TrimSpace(e.ChildText("div[class='price__regular'] span:last-child"))
+
+		cockspits = append(cockspits, cockpit)
 	})
 
 	c.OnRequest(func(r *colly.Request) {
 		fmt.Printf("Visiting: %s\n", r.URL.String())
 
 		r.Headers.Set("User-Agent", "Mozilla/5.0 (Android 12; Mobile; rv:109.0) Gecko/113.0 Firefox/113.0")
-		r.Headers.Set("X-Bbl-Store-Region", "EU")
-		r.Headers.Set("X-Bbl-Time-Zone", "Europe/Lisbon")
 	})
 
 	c.OnError(func(r *colly.Response, err error) {
 		fmt.Println("Request URL:", r.Request.URL, "failed with response:", r, "\nError:", err)
 	})
 
-	if err := c.Visit(url); err != nil {
+	c.OnScraped(func(r *colly.Response) {
+		for _, v := range cockspits {
+			fmt.Printf("\ncockpit: %s\n%s\n", v.Name, v.Price)
+		}
+	})
+
+	if err := c.Visit(i.NewSimlab().URL()); err != nil {
 		panic(err)
 	}
 }
