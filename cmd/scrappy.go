@@ -1,21 +1,19 @@
 package main
 
 import (
-	"fmt"
-
 	"scrappy/internal"
 	"scrappy/types"
 )
 
 func main() {
-	scrapees := []types.Scrapees{
-		internal.Simlab{},
-		internal.GTOmega{},
+	scrapees := map[string]types.Scrapees{
+		"simlab":  internal.Simlab{},
+		"gtomega": internal.GTOmega{},
 	}
 
-	for _, scrapee := range scrapees {
-		for _, product := range scrapee.Run() {
-			fmt.Printf("\n%s\n%s\n", product.Name(), product.Price())
+	for fileName, scrapee := range scrapees {
+		if err := internal.SaveAsJSON(scrapee.Run(), fileName); err != nil {
+			panic(err)
 		}
 	}
 }
