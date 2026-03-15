@@ -7,8 +7,9 @@ import (
 
 func main() {
 	scrapees := map[string]types.Scrapees{
-		"simlab":  internal.Simlab{},
-		"gtomega": internal.GTOmega{},
+		"simlab":          internal.Simlab{},
+		"nextlevelracing": internal.NextLevelRacing{},
+		"gtomega":         internal.GTOmega{},
 	}
 
 	for fileName, scrapee := range scrapees {
