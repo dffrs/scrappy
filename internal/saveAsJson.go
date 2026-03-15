@@ -11,12 +11,6 @@ import (
 
 const dir = "./data"
 
-// TODO: Goal is to remove this struct
-type ProdJSON struct {
-	Name  string `json:"name"`
-	Price string `json:"price"`
-}
-
 func createDirIfNotExists() (string, error) {
 	path := filepath.Join(".", dir)
 	err := os.MkdirAll(path, os.ModePerm)
@@ -41,12 +35,7 @@ func SaveAsJSON(products []types.Product, fileName string) error {
 		_ = file.Close()
 	}()
 
-	ps := make([]ProdJSON, 0, 20)
-	for _, prod := range products {
-		ps = append(ps, ProdJSON{Name: prod.Name(), Price: prod.Price()})
-	}
-
-	data, err := json.MarshalIndent(ps, "", " ")
+	data, err := json.MarshalIndent(products, "", " ")
 	if err != nil {
 		return err
 	}

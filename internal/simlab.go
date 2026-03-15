@@ -11,27 +11,13 @@ import (
 )
 
 type Simlab struct {
-	url   string
-	name  string
-	price string
+	url string
 }
 
 func NewSimlab() Simlab {
 	return Simlab{
 		url: "https://sim-lab.eu/en-pt/collections/sim-racing-cockpits",
 	}
-}
-
-func (sm Simlab) URL() string {
-	return sm.url
-}
-
-func (sm Simlab) Name() string {
-	return sm.name
-}
-
-func (sm Simlab) Price() string {
-	return sm.price
 }
 
 func (sm Simlab) Run() []types.Product {
@@ -42,12 +28,10 @@ func (sm Simlab) Run() []types.Product {
 	)
 
 	c.OnHTML("ul[id='product-grid'] li[class='grid__item']", func(e *colly.HTMLElement) {
-		cockpit := NewSimlab()
-
-		cockpit.name = strings.Split(strings.TrimSpace(e.ChildText("h3 a")), "\n")[0]
-		cockpit.price = strings.TrimSpace(e.ChildText("div[class='price__regular'] span:last-child"))
-
-		cockspits = append(cockspits, cockpit)
+		cockspits = append(cockspits, types.Product{
+			Name:  strings.Split(strings.TrimSpace(e.ChildText("h3 a")), "\n")[0],
+			Price: strings.TrimSpace(e.ChildText("div[class='price__regular'] span:last-child")),
+		})
 	})
 
 	c.OnRequest(func(r *colly.Request) {

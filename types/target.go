@@ -1,9 +1,9 @@
 // Package types
 package types
 
-type Product interface {
-	Name() string
-	Price() string
+type Product struct {
+	Name  string `json:"name"`
+	Price string `json:"price"`
 }
 
 type Scrapees interface {

@@ -14,27 +14,13 @@ import (
 )
 
 type GTOmega struct {
-	url   string
-	name  string
-	price string
+	url string
 }
 
 func NewGTOmega() GTOmega {
 	return GTOmega{
 		url: "https://www.gtomega.eu/collections/cockpits",
 	}
-}
-
-func (gto GTOmega) URL() string {
-	return gto.url
-}
-
-func (gto GTOmega) Name() string {
-	return gto.name
-}
-
-func (gto GTOmega) Price() string {
-	return gto.price
 }
 
 func (gto GTOmega) Run() []types.Product {
@@ -67,12 +53,10 @@ func (gto GTOmega) Run() []types.Product {
 	})
 
 	c.OnHTML("ul[id='gf-products'] div[class='spf-product__info']", func(e *colly.HTMLElement) {
-		cockpit := NewGTOmega()
-
-		cockpit.name = strings.TrimSpace(e.ChildText("a"))
-		cockpit.price = strings.TrimSpace(e.ChildText("div[class='spf-product-card__price-wrapper'] span:last-child"))
-
-		cockspits = append(cockspits, cockpit)
+		cockspits = append(cockspits, types.Product{
+			Name:  strings.TrimSpace(e.ChildText("a")),
+			Price: strings.TrimSpace(e.ChildText("div[class='spf-product-card__price-wrapper'] span:last-child")),
+		})
 	})
 
 	c.OnRequest(func(r *colly.Request) {
