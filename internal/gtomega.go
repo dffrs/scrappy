@@ -43,13 +43,13 @@ func headlessBrowser(url string) (*string, error) {
 	return &htmlContent, nil
 }
 
-func (gto GTOmega) Run() []types.Product {
+func (gto GTOmega) Run() ([]types.Product, error) {
 	url := NewGTOmega().url
 	cockspits := make([]types.Product, 0, 20)
 
 	htmlContent, err := headlessBrowser(url)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	c := colly.NewCollector(
@@ -78,8 +78,8 @@ func (gto GTOmega) Run() []types.Product {
 	})
 
 	if err := c.Visit(url); err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	return cockspits
+	return cockspits, nil
 }

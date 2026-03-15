@@ -7,5 +7,5 @@ type Product struct {
 }
 
 type Scrapees interface {
-	Run() []Product
+	Run() ([]Product, error)
 }

@@ -12,7 +12,13 @@ func main() {
 	}
 
 	for fileName, scrapee := range scrapees {
-		if err := internal.SaveAsJSON(scrapee.Run(), fileName); err != nil {
+		products, err := scrapee.Run()
+		if err != nil {
+			panic(err)
+		}
+
+		err = internal.SaveAsJSON(products, fileName)
+		if err != nil {
 			panic(err)
 		}
 	}

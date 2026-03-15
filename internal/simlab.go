@@ -20,7 +20,7 @@ func NewSimlab() Simlab {
 	}
 }
 
-func (sm Simlab) Run() []types.Product {
+func (sm Simlab) Run() ([]types.Product, error) {
 	cockspits := make([]types.Product, 0, 20)
 
 	c := colly.NewCollector(
@@ -45,8 +45,8 @@ func (sm Simlab) Run() []types.Product {
 	})
 
 	if err := c.Visit(NewSimlab().url); err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	return cockspits
+	return cockspits, nil
 }
