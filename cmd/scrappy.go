@@ -10,6 +10,7 @@ import (
 func main() {
 	scrapees := []types.Scrapees{
 		internal.Simlab{},
+		internal.GTOmega{},
 	}
 
 	for _, scrapee := range scrapees {

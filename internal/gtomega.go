@@ -1,0 +1,93 @@
+package internal
+
+import (
+	"context"
+	"fmt"
+	"log"
+	"strings"
+	"time"
+
+	"scrappy/types"
+
+	"github.com/chromedp/chromedp"
+	"github.com/gocolly/colly/v2"
+)
+
+type GTOmega struct {
+	url   string
+	name  string
+	price string
+}
+
+func NewGTOmega() GTOmega {
+	return GTOmega{
+		url: "https://www.gtomega.eu/collections/cockpits",
+	}
+}
+
+func (gto GTOmega) URL() string {
+	return gto.url
+}
+
+func (gto GTOmega) Name() string {
+	return gto.name
+}
+
+func (gto GTOmega) Price() string {
+	return gto.price
+}
+
+func (gto GTOmega) Run() []types.Product {
+	url := NewGTOmega().url
+	cockspits := make([]types.Product, 0, 20)
+
+	var htmlContent string
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	ctx, cancel = chromedp.NewContext(ctx)
+	defer cancel()
+
+	err := chromedp.Run(ctx,
+		chromedp.Navigate(url),
+		chromedp.WaitVisible("ul[id='gf-products']"),
+		chromedp.OuterHTML("html", &htmlContent),
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	c := colly.NewCollector(
+		colly.CacheDir("./cache/gtomega"),
+	)
+
+	c.OnResponse(func(r *colly.Response) {
+		r.Body = []byte(htmlContent)
+	})
+
+	c.OnHTML("ul[id='gf-products'] div[class='spf-product__info']", func(e *colly.HTMLElement) {
+		cockpit := NewGTOmega()
+
+		cockpit.name = strings.TrimSpace(e.ChildText("a"))
+		cockpit.price = strings.TrimSpace(e.ChildText("div[class='spf-product-card__price-wrapper'] span:last-child"))
+
+		cockspits = append(cockspits, cockpit)
+	})
+
+	c.OnRequest(func(r *colly.Request) {
+		fmt.Printf("Visiting: %s\n", r.URL.String())
+
+		r.Headers.Set("User-Agent", "Mozilla/5.0 (Android 12; Mobile; rv:109.0) Gecko/113.0 Firefox/113.0")
+	})
+
+	c.OnError(func(r *colly.Response, err error) {
+		fmt.Println("Request URL:", r.Request.URL, "failed with response:", r, "\nError:", err)
+	})
+
+	if err := c.Visit(url); err != nil {
+		panic(err)
+	}
+
+	return cockspits
+}
