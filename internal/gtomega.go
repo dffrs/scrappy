@@ -3,7 +3,6 @@ package internal
 import (
 	"context"
 	"fmt"
-	"log"
 	"strings"
 	"time"
 
@@ -23,10 +22,7 @@ func NewGTOmega() GTOmega {
 	}
 }
 
-func (gto GTOmega) Run() []types.Product {
-	url := NewGTOmega().url
-	cockspits := make([]types.Product, 0, 20)
-
+func headlessBrowser(url string) (*string, error) {
 	var htmlContent string
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -41,7 +37,19 @@ func (gto GTOmega) Run() []types.Product {
 		chromedp.OuterHTML("html", &htmlContent),
 	)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
+	}
+
+	return &htmlContent, nil
+}
+
+func (gto GTOmega) Run() []types.Product {
+	url := NewGTOmega().url
+	cockspits := make([]types.Product, 0, 20)
+
+	htmlContent, err := headlessBrowser(url)
+	if err != nil {
+		panic(err)
 	}
 
 	c := colly.NewCollector(
@@ -49,7 +57,7 @@ func (gto GTOmega) Run() []types.Product {
 	)
 
 	c.OnResponse(func(r *colly.Response) {
-		r.Body = []byte(htmlContent)
+		r.Body = []byte(*htmlContent)
 	})
 
 	c.OnHTML("ul[id='gf-products'] div[class='spf-product__info']", func(e *colly.HTMLElement) {
