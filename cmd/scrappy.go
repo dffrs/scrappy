@@ -26,15 +26,13 @@ func main() {
 		}
 	}
 
-	// TODO: test to send email. This needs to be removed
-	config, err := internal.LoadEnv()
+	mail, err := internal.NewMail()
 	if err != nil {
 		panic(err)
 	}
 
 	message := "Subject: Test\nHello there"
-
-	err = internal.NewMail(config).SetMessage(&message).Send()
+	err = mail.SetMessage(&message).Send()
 	if err != nil {
 		panic(err)
 	}

@@ -15,14 +15,20 @@ type mail struct {
 	message  *string
 }
 
-func NewMail(config *config) *mail {
+func NewMail() (*mail, error) {
+	config, err := loadEnv()
+	if err != nil {
+		return nil, err
+	}
+
 	return &mail{
 		from:     config.from,
 		to:       config.to,
 		password: config.password,
 		host:     config.host,
 		port:     config.port,
-	}
+		message:  nil,
+	}, nil
 }
 
 func (m *mail) SetMessage(message *string) *mail {

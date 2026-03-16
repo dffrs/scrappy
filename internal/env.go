@@ -19,7 +19,7 @@ type config struct {
 	port     int
 }
 
-func LoadEnv() (*config, error) {
+func loadEnv() (*config, error) {
 	path, err := os.UserConfigDir()
 	if err != nil {
 		return nil, err
