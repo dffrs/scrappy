@@ -14,13 +14,13 @@ type mail struct {
 	message  string
 }
 
-func NewMail(message string) *mail {
+func NewMail(message string, config *config) *mail {
 	return &mail{
-		from:     "",               // TODO: Load from .env
-		password: "",               // TODO: Load from .env
-		host:     "smtp.gmail.com", // TODO: Load from .env
-		port:     587,              // TODO: Load from .env
-		to:       []string{""},     // TODO: Load from .env
+		from:     config.from,
+		to:       config.to,
+		password: config.password,
+		host:     config.host,
+		port:     config.port,
 		message:  message,
 	}
 }
