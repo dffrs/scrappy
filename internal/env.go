@@ -27,6 +27,7 @@ func LoadEnv() (*config, error) {
 
 	envPath := fmt.Sprintf("%s%s%s", path, string(os.PathSeparator), envName)
 
+	// TODO: if file does not exist, create it
 	err = godotenv.Load(envPath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to load %s file. Create it, if it does not exist", envPath)
