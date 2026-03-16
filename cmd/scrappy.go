@@ -32,7 +32,9 @@ func main() {
 		panic(err)
 	}
 
-	err = internal.NewMail("Subject: Test\nHello there", config).Send()
+	message := "Subject: Test\nHello there"
+
+	err = internal.NewMail(config).SetMessage(&message).Send()
 	if err != nil {
 		panic(err)
 	}
