@@ -8,21 +8,24 @@ import (
 )
 
 func main() {
-	scrapees := map[string]types.Scrapees{
-		"simlab":          internal.Simlab{},
-		"nextlevelracing": internal.NextLevelRacing{},
-		"gtomega":         internal.GTOmega{},
-	}
-
-	for fileName, scrapee := range scrapees {
-		products, err := scrapee.Run()
-		if err != nil {
-			panic(err)
+	// TODO: Remove me
+	if false {
+		scrapees := map[string]types.Scrapees{
+			"simlab":          internal.Simlab{},
+			"nextlevelracing": internal.NextLevelRacing{},
+			"gtomega":         internal.GTOmega{},
 		}
 
-		err = internal.SaveAsJSON(products, fileName)
-		if err != nil {
-			panic(err)
+		for fileName, scrapee := range scrapees {
+			products, err := scrapee.Run()
+			if err != nil {
+				panic(err)
+			}
+
+			err = internal.SaveAsJSON(products, fileName)
+			if err != nil {
+				panic(err)
+			}
 		}
 	}
 
@@ -31,8 +34,10 @@ func main() {
 		panic(err)
 	}
 
-	message := "Subject: Test\nHello there"
-	err = mail.SetMessage(&message).Send()
+	subject := "Test with template"
+	message := "Hello there"
+
+	err = mail.SetSubject(&subject).SetMessage(&message).Send()
 	if err != nil {
 		panic(err)
 	}
