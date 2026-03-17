@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"html/template"
 	"net/smtp"
+
+	"scrappy/types"
 )
 
 type mail struct {
@@ -65,7 +67,11 @@ func (m *mail) Send() error {
 		return err
 	}
 
-	err = t.Execute(&body, struct{ Name string }{Name: "Daniel"})
+	err = t.Execute(&body, struct {
+		Name     string
+		Products []types.Product
+		Site     string
+	}{Name: "Daniel", Products: []types.Product{{Name: "Prime Lite", Price: "500"}, {Name: "Prime", Price: "1000"}}, Site: "gtomega"})
 	if err != nil {
 		return err
 	}
