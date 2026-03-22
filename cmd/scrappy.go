@@ -8,7 +8,7 @@ import (
 	"scrappy/types"
 )
 
-var dbPath = "db.db"
+var dbPath = "./data.db"
 
 func main() {
 	scrapees := map[string]types.Scrapees{
