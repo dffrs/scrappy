@@ -1,11 +1,14 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 
 	"scrappy/internal"
 	"scrappy/types"
 )
+
+var dbPath = "db.db"
 
 func main() {
 	scrapees := map[string]types.Scrapees{
@@ -25,6 +28,13 @@ func main() {
 			panic(err)
 		}
 	}
+
+	// NOTE: wip
+	db, err := sql.Open("sqlite3", dbPath)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
 
 	mail, err := internal.NewMail()
 	if err != nil {
