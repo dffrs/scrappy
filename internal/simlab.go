@@ -11,16 +11,20 @@ import (
 )
 
 type Simlab struct {
-	url string
+	site string
+	url  string
 }
 
 func NewSimlab() Simlab {
 	return Simlab{
-		url: "https://sim-lab.eu/en-pt/collections/sim-racing-cockpits",
+		site: "https://sim-lab.eu",
+		url:  "https://sim-lab.eu/en-pt/collections/sim-racing-cockpits",
 	}
 }
 
 func (sm Simlab) Run() ([]types.Product, error) {
+	simlab := NewSimlab()
+
 	cockspits := make([]types.Product, 0, 20)
 
 	c := colly.NewCollector(
@@ -31,6 +35,8 @@ func (sm Simlab) Run() ([]types.Product, error) {
 		cockspits = append(cockspits, types.Product{
 			Name:  strings.Split(strings.TrimSpace(e.ChildText("h3 a")), "\n")[0],
 			Price: strings.TrimSpace(e.ChildText("div[class='price__regular'] span:last-child")),
+			Site:  simlab.site,
+			URL:   fmt.Sprintf("%s%s", simlab.site, e.ChildAttr("h3 a", "href")),
 		})
 	})
 
@@ -44,7 +50,7 @@ func (sm Simlab) Run() ([]types.Product, error) {
 		fmt.Println("Request URL:", r.Request.URL, "failed with response:", r, "\nError:", err)
 	})
 
-	if err := c.Visit(NewSimlab().url); err != nil {
+	if err := c.Visit(simlab.url); err != nil {
 		return nil, err
 	}
 

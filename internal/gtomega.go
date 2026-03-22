@@ -13,12 +13,14 @@ import (
 )
 
 type GTOmega struct {
-	url string
+	site string
+	url  string
 }
 
 func NewGTOmega() GTOmega {
 	return GTOmega{
-		url: "https://www.gtomega.eu/collections/cockpits",
+		site: "https://www.gtomega.eu",
+		url:  "https://www.gtomega.eu/collections/cockpits",
 	}
 }
 
@@ -44,10 +46,10 @@ func headlessBrowser(url string) (*string, error) {
 }
 
 func (gto GTOmega) Run() ([]types.Product, error) {
-	url := NewGTOmega().url
+	gtomega := NewGTOmega()
 	cockspits := make([]types.Product, 0, 20)
 
-	htmlContent, err := headlessBrowser(url)
+	htmlContent, err := headlessBrowser(gtomega.url)
 	if err != nil {
 		return nil, err
 	}
@@ -64,6 +66,8 @@ func (gto GTOmega) Run() ([]types.Product, error) {
 		cockspits = append(cockspits, types.Product{
 			Name:  strings.TrimSpace(e.ChildText("a")),
 			Price: strings.TrimSpace(e.ChildText("div[class='spf-product-card__price-wrapper'] span:last-child")),
+			Site:  gtomega.site,
+			URL:   fmt.Sprintf("%s%s", gtomega.site, e.ChildAttr("a", "href")),
 		})
 	})
 
@@ -77,7 +81,7 @@ func (gto GTOmega) Run() ([]types.Product, error) {
 		fmt.Println("Request URL:", r.Request.URL, "failed with response:", r, "\nError:", err)
 	})
 
-	if err := c.Visit(url); err != nil {
+	if err := c.Visit(gtomega.url); err != nil {
 		return nil, err
 	}
 

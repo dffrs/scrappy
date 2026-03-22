@@ -11,16 +11,19 @@ import (
 )
 
 type NextLevelRacing struct {
-	url string
+	site string
+	url  string
 }
 
 func NewNextLevelRacing() NextLevelRacing {
 	return NextLevelRacing{
-		url: "https://nextlevelracing.com/racing-cockpits/",
+		site: "https://nextlevelracing.com",
+		url:  "https://nextlevelracing.com/racing-cockpits/",
 	}
 }
 
 func (nlr NextLevelRacing) Run() ([]types.Product, error) {
+	nextLevelRacing := NewNextLevelRacing()
 	cockspits := make([]types.Product, 0, 20)
 
 	c := colly.NewCollector(
@@ -45,6 +48,8 @@ func (nlr NextLevelRacing) Run() ([]types.Product, error) {
 		cockspits = append(cockspits, types.Product{
 			Name:  name,
 			Price: price,
+			Site:  nextLevelRacing.site,
+			URL:   e.ChildAttr("div[class='s2'] a", "href"),
 		})
 	})
 
@@ -58,7 +63,7 @@ func (nlr NextLevelRacing) Run() ([]types.Product, error) {
 		fmt.Println("Request URL:", r.Request.URL, "failed with response:", r, "\nError:", err)
 	})
 
-	if err := c.Visit(NewNextLevelRacing().url); err != nil {
+	if err := c.Visit(nextLevelRacing.url); err != nil {
 		return nil, err
 	}
 
