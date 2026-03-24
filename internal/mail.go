@@ -16,7 +16,7 @@ type mail struct {
 	host     string
 	port     int
 	to       []string
-	subject  *string
+	subject  string
 	products []types.Product
 }
 
@@ -36,12 +36,12 @@ func NewMail() (*mail, error) {
 		password: config.password,
 		host:     config.host,
 		port:     config.port,
-		subject:  nil,
+		subject:  "",
 		products: nil,
 	}, nil
 }
 
-func (m *mail) SetSubject(subject *string) *mail {
+func (m *mail) SetSubject(subject string) *mail {
 	m.subject = subject
 	return m
 }
@@ -52,7 +52,7 @@ func (m *mail) SetProducts(products []types.Product) *mail {
 }
 
 func (m *mail) Send() error {
-	if m.subject == nil {
+	if m.subject == "" {
 		return errors.New("subject has not been set")
 	}
 
@@ -75,7 +75,7 @@ func (m *mail) Send() error {
 		return err
 	}
 
-	msg := fmt.Sprintf("Subject: %s\n%s\n\n%s", *m.subject, m.buildHeader(), body.String())
+	msg := fmt.Sprintf("Subject: %s\n%s\n\n%s", m.subject, m.buildHeader(), body.String())
 
 	auth := smtp.PlainAuth("", m.from, m.password, m.host)
 
