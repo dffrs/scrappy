@@ -17,7 +17,7 @@ type mail struct {
 	port     int
 	to       []string
 	subject  *string
-	message  *string
+	products []types.Product
 }
 
 func (m *mail) buildHeader() string {
@@ -37,7 +37,7 @@ func NewMail() (*mail, error) {
 		host:     config.host,
 		port:     config.port,
 		subject:  nil,
-		message:  nil,
+		products: nil,
 	}, nil
 }
 
@@ -46,8 +46,8 @@ func (m *mail) SetSubject(subject *string) *mail {
 	return m
 }
 
-func (m *mail) SetMessage(message *string) *mail {
-	m.message = message
+func (m *mail) SetProducts(products []types.Product) *mail {
+	m.products = products
 	return m
 }
 
@@ -56,8 +56,8 @@ func (m *mail) Send() error {
 		return errors.New("subject has not been set")
 	}
 
-	if m.message == nil {
-		return errors.New("message has not been set")
+	if m.products == nil {
+		return errors.New("products have not been set")
 	}
 
 	var body bytes.Buffer
@@ -71,7 +71,7 @@ func (m *mail) Send() error {
 		Name     string
 		Products []types.Product
 		Site     string
-	}{Name: "Daniel", Products: []types.Product{{Name: "Prime Lite", Price: "500"}, {Name: "Prime", Price: "1000"}}, Site: "gtomega"})
+	}{Name: "Daniel", Products: m.products})
 	if err != nil {
 		return err
 	}

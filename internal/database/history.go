@@ -38,3 +38,72 @@ func (s *HistoryModel) GetOrCreate(productID int, price float32) (int, error) {
 
 	return id, nil
 }
+
+func (s *HistoryModel) GetByID(historyID int) (*History, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	query := `SELECT id, product_id, price, date FROM history WHERE id = ?`
+
+	model := History{}
+
+	err := s.DB.QueryRowContext(ctx, query, historyID).Scan(&model.ID, &model.ProductID, &model.Price, &model.Date)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	return &model, nil
+}
+
+func (s *HistoryModel) GetLatest(productID int) (*History, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	query := `
+		SELECT id, product_id, price, date
+		FROM history
+		WHERE product_id = ?
+		ORDER BY date DESC
+		LIMIT 1
+	`
+
+	model := History{}
+
+	err := s.DB.QueryRowContext(ctx, query, productID).Scan(&model.ID, &model.ProductID, &model.Price, &model.Date)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	return &model, nil
+}
+
+func (s *HistoryModel) GetPrevious(productID int) (*History, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	query := `
+		SELECT id, product_id, price, date
+		FROM history
+		WHERE product_id = ?
+		ORDER BY date DESC
+		LIMIT 1 OFFSET 1
+	`
+
+	model := History{}
+
+	err := s.DB.QueryRowContext(ctx, query, productID).Scan(&model.ID, &model.ProductID, &model.Price, &model.Date)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	return &model, nil
+}
