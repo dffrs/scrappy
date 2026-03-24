@@ -91,6 +91,31 @@ make build
 
 ---
 
+## Usage
+
+Once set up, run it manually:
+
+```bash
+./bin/scrappy
+```
+
+Or schedule it as a daily cron job:
+
+```bash
+# Runs every day at 08:00
+0 8 * * * /path/to/scrappy/bin/scrappy
+```
+
+On the first run, scrappy will populate the database with current prices — no email will be sent since there's no previous price to compare against. From the second run onwards, it will start detecting drops.
+
+---
+
+## Email preview
+
+![Email Preview](assets/preview.png)
+
+---
+
 ## Makefile targets
 
 | Target         | Description                             |
