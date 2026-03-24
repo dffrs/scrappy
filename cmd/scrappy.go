@@ -105,6 +105,11 @@ func main() {
 		panic(err)
 	}
 
+	if len(cheaperProducts) < 1 {
+		fmt.Println("No price drop detected")
+		return
+	}
+
 	mail, err := internal.NewMail()
 	if err != nil {
 		panic(err)

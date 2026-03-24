@@ -23,12 +23,12 @@ func (s *HistoryModel) GetOrCreate(productID int, price float32) (int, error) {
 
 	insert := `INSERT INTO history (product_id, price) VALUES (?, ?)`
 
-	_, err := s.DB.ExecContext(ctx, insert, productID)
+	_, err := s.DB.ExecContext(ctx, insert, productID, price)
 	if err != nil {
 		return 0, err
 	}
 
-	query := "SELECT id FROM history ORDER BY date DESC LIMIT 1 WHERE product_id = ?"
+	query := "SELECT id FROM history WHERE product_id = ? ORDER BY date DESC LIMIT 1"
 
 	var id int
 	err = s.DB.QueryRowContext(ctx, query, productID).Scan(&id)
