@@ -68,9 +68,8 @@ func (m *mail) Send() error {
 	}
 
 	err = t.Execute(&body, struct {
-		Name     string
 		Products []types.Product
-	}{Name: "Daniel", Products: m.products})
+	}{Products: m.products})
 	if err != nil {
 		return err
 	}
