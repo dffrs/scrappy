@@ -71,8 +71,7 @@ func saveProducts(products []types.Product, models database.Models) ([]types.Pro
 			continue
 		}
 
-		// TODO: remove me
-		if yesterdays.Price > todays.Price || true {
+		if yesterdays.Price > todays.Price {
 			cheaperProducts = append(cheaperProducts, product)
 		}
 	}
