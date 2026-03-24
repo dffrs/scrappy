@@ -35,3 +35,6 @@ cache
 
 # data
 data
+
+# db 
+*.db

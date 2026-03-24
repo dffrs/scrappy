@@ -16,8 +16,8 @@ type mail struct {
 	host     string
 	port     int
 	to       []string
-	subject  *string
-	message  *string
+	subject  string
+	products []types.Product
 }
 
 func (m *mail) buildHeader() string {
@@ -36,28 +36,28 @@ func NewMail() (*mail, error) {
 		password: config.password,
 		host:     config.host,
 		port:     config.port,
-		subject:  nil,
-		message:  nil,
+		subject:  "",
+		products: nil,
 	}, nil
 }
 
-func (m *mail) SetSubject(subject *string) *mail {
+func (m *mail) SetSubject(subject string) *mail {
 	m.subject = subject
 	return m
 }
 
-func (m *mail) SetMessage(message *string) *mail {
-	m.message = message
+func (m *mail) SetProducts(products []types.Product) *mail {
+	m.products = products
 	return m
 }
 
 func (m *mail) Send() error {
-	if m.subject == nil {
+	if m.subject == "" {
 		return errors.New("subject has not been set")
 	}
 
-	if m.message == nil {
-		return errors.New("message has not been set")
+	if m.products == nil {
+		return errors.New("products have not been set")
 	}
 
 	var body bytes.Buffer
@@ -70,13 +70,12 @@ func (m *mail) Send() error {
 	err = t.Execute(&body, struct {
 		Name     string
 		Products []types.Product
-		Site     string
-	}{Name: "Daniel", Products: []types.Product{{Name: "Prime Lite", Price: "500"}, {Name: "Prime", Price: "1000"}}, Site: "gtomega"})
+	}{Name: "Daniel", Products: m.products})
 	if err != nil {
 		return err
 	}
 
-	msg := fmt.Sprintf("Subject: %s\n%s\n\n%s", *m.subject, m.buildHeader(), body.String())
+	msg := fmt.Sprintf("Subject: %s\n%s\n\n%s", m.subject, m.buildHeader(), body.String())
 
 	auth := smtp.PlainAuth("", m.from, m.password, m.host)
 

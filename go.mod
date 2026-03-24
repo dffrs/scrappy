@@ -5,7 +5,9 @@ go 1.26.1
 require (
 	github.com/chromedp/chromedp v0.14.2
 	github.com/gocolly/colly/v2 v2.3.0
+	github.com/golang-migrate/migrate v3.5.4+incompatible
 	github.com/joho/godotenv v1.5.1
+	github.com/mattn/go-sqlite3 v1.14.37
 )
 
 require (
