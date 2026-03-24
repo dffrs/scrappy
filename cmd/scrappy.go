@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 
+	_ "github.com/mattn/go-sqlite3"
+
 	"scrappy/internal"
 	"scrappy/internal/database"
 	"scrappy/types"
@@ -14,13 +16,16 @@ var dbPath = "./data.db"
 func scrapSites(scrapees map[string]types.Scrapees) ([]types.Product, error) {
 	p := make([]types.Product, 0, 100)
 
-	for _, scrapee := range scrapees {
+	for fileName, scrapee := range scrapees {
 		products, err := scrapee.Run()
 		if err != nil {
 			return nil, err
 		}
 
 		p = append(p, products...)
+
+		// TODO: remove me
+		_ = internal.SaveAsJSON(products, fileName)
 	}
 
 	return p, nil
@@ -78,7 +83,9 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	defer db.Close()
+	defer func() {
+		_ = db.Close()
+	}()
 
 	scrapees := map[string]types.Scrapees{
 		"simlab":          internal.Simlab{},

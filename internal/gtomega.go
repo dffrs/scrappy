@@ -63,9 +63,14 @@ func (gto GTOmega) Run() ([]types.Product, error) {
 	})
 
 	c.OnHTML("ul[id='gf-products'] div[class='spf-product__info']", func(e *colly.HTMLElement) {
+		price, err := extractPrice(strings.TrimSpace(e.ChildText("div[class='spf-product-card__price-wrapper'] span:last-child")))
+		if err != nil {
+			panic(err)
+		}
+
 		cockspits = append(cockspits, types.Product{
 			Name:  strings.TrimSpace(e.ChildText("a")),
-			Price: strings.TrimSpace(e.ChildText("div[class='spf-product-card__price-wrapper'] span:last-child")),
+			Price: price,
 			Site:  gtomega.site,
 			URL:   fmt.Sprintf("%s%s", gtomega.site, e.ChildAttr("a", "href")),
 		})

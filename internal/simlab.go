@@ -32,9 +32,14 @@ func (sm Simlab) Run() ([]types.Product, error) {
 	)
 
 	c.OnHTML("ul[id='product-grid'] li[class='grid__item']", func(e *colly.HTMLElement) {
+		price, err := extractPrice(strings.TrimSpace(e.ChildText("div[class='price__regular'] span:last-child")))
+		if err != nil {
+			panic(err)
+		}
+
 		cockspits = append(cockspits, types.Product{
 			Name:  strings.Split(strings.TrimSpace(e.ChildText("h3 a")), "\n")[0],
-			Price: strings.TrimSpace(e.ChildText("div[class='price__regular'] span:last-child")),
+			Price: price,
 			Site:  simlab.site,
 			URL:   fmt.Sprintf("%s%s", simlab.site, e.ChildAttr("h3 a", "href")),
 		})

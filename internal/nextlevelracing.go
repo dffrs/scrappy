@@ -38,11 +38,9 @@ func (nlr NextLevelRacing) Run() ([]types.Product, error) {
 			name = fmt.Sprintf("%s - %s", name, desc)
 		}
 
-		price := strings.TrimSpace(e.ChildText("div[class='price'] div[class$='eur'] span[class='sale_price'] span:last-child"))
-		currency := strings.TrimSpace(e.ChildText("div[class='price'] div[class$='eur'] span[class='sale_price'] span:first-child"))
-
-		if currency != "" {
-			price = fmt.Sprintf("%s%s", currency, price)
+		price, err := extractPrice(strings.TrimSpace(e.ChildText("div[class='price'] div[class$='eur'] span[class='sale_price'] span:last-child")))
+		if err != nil {
+			panic(err)
 		}
 
 		cockspits = append(cockspits, types.Product{
