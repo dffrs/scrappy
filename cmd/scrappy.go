@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"os"
 
 	_ "github.com/mattn/go-sqlite3"
 
@@ -70,7 +71,8 @@ func saveProducts(products []types.Product, models database.Models) ([]types.Pro
 			continue
 		}
 
-		if yesterdays.Price > todays.Price {
+		// TODO: remove me
+		if yesterdays.Price > todays.Price || true {
 			cheaperProducts = append(cheaperProducts, product)
 		}
 	}
@@ -107,7 +109,7 @@ func main() {
 
 	if len(cheaperProducts) < 1 {
 		fmt.Println("No price drop detected")
-		return
+		os.Exit(2)
 	}
 
 	mail, err := internal.NewMail()
@@ -123,4 +125,5 @@ func main() {
 	}
 
 	fmt.Println("Email sent!")
+	os.Exit(0)
 }
