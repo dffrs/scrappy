@@ -169,4 +169,5 @@ scrapees := map[string]types.Scrapees{
 
 - [X] Code clean up
 - [ ] Show old price on email
+- [ ] Instead of detecting price drops, detect price changes - this way price increases would be flagged
 - [ ] Make websites to be scrapped configurable
