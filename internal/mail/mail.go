@@ -20,7 +20,7 @@ type Mail struct {
 	products []types.Product
 }
 
-func New() (*Mail, error) {
+func NewMail() (*Mail, error) {
 	config, err := loadConfig()
 	if err != nil {
 		return nil, err

@@ -33,7 +33,7 @@ func main() {
 		os.Exit(2)
 	}
 
-	m, err := mail.New()
+	m, err := mail.NewMail()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
