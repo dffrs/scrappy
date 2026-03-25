@@ -1,4 +1,4 @@
-package internal
+package scraper
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"scrappy/types"
+	"scrappy/internal/types"
 
 	"github.com/chromedp/chromedp"
 	"github.com/gocolly/colly/v2"

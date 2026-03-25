@@ -1,6 +1,6 @@
-package internal
+package scraper
 
-import "scrappy/types"
+import "scrappy/internal/types"
 
 func ScrapSites(scrapees map[string]types.Scrapees) ([]types.Product, error) {
 	p := make([]types.Product, 0, 100)
@@ -12,7 +12,6 @@ func ScrapSites(scrapees map[string]types.Scrapees) ([]types.Product, error) {
 		}
 
 		p = append(p, products...)
-
 	}
 
 	return p, nil

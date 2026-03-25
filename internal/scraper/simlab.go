@@ -1,11 +1,10 @@
-// Package internal
-package internal
+package scraper
 
 import (
 	"fmt"
 	"strings"
 
-	"scrappy/types"
+	"scrappy/internal/types"
 
 	"github.com/gocolly/colly/v2"
 )

@@ -1,4 +1,4 @@
-package internal
+package mail
 
 import (
 	"bytes"
@@ -7,10 +7,10 @@ import (
 	"html/template"
 	"net/smtp"
 
-	"scrappy/types"
+	"scrappy/internal/types"
 )
 
-type mail struct {
+type Mail struct {
 	from     string
 	password string
 	host     string
@@ -20,38 +20,38 @@ type mail struct {
 	products []types.Product
 }
 
-func (m *mail) buildHeader() string {
-	return "MIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";"
-}
-
-func NewMail() (*mail, error) {
-	config, err := loadEnv()
+func New() (*Mail, error) {
+	config, err := loadConfig()
 	if err != nil {
 		return nil, err
 	}
 
-	return &mail{
-		from:     config.from,
-		to:       config.to,
-		password: config.password,
-		host:     config.host,
-		port:     config.port,
+	return &Mail{
+		from:     config.From,
+		to:       config.To,
+		password: config.Password,
+		host:     config.Host,
+		port:     config.Port,
 		subject:  "",
 		products: nil,
 	}, nil
 }
 
-func (m *mail) SetSubject(subject string) *mail {
+func (m *Mail) SetSubject(subject string) *Mail {
 	m.subject = subject
 	return m
 }
 
-func (m *mail) SetProducts(products []types.Product) *mail {
+func (m *Mail) SetProducts(products []types.Product) *Mail {
 	m.products = products
 	return m
 }
 
-func (m *mail) Send() error {
+func (m *Mail) buildHeader() string {
+	return "MIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";"
+}
+
+func (m *Mail) Send() error {
 	if m.subject == "" {
 		return errors.New("subject has not been set")
 	}
@@ -61,7 +61,6 @@ func (m *mail) Send() error {
 	}
 
 	var body bytes.Buffer
-	// TODO: this needs to be embeded
 	t, err := template.ParseFiles("assets/template.html")
 	if err != nil {
 		return err

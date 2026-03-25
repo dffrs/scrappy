@@ -1,4 +1,4 @@
-package internal
+package mail
 
 import (
 	"fmt"
@@ -11,12 +11,12 @@ import (
 
 const envName = "scrappy.env"
 
-type config struct {
-	from     string
-	to       []string
-	password string
-	host     string
-	port     int
+type Config struct {
+	From     string
+	To       []string
+	Password string
+	Host     string
+	Port     int
 }
 
 func createEmptyEnvFile(filePath string) error {
@@ -49,7 +49,7 @@ func isEnvFileCreated(filePath string) bool {
 	return true
 }
 
-func loadEnv() (*config, error) {
+func loadConfig() (*Config, error) {
 	path, err := os.UserConfigDir()
 	if err != nil {
 		return nil, err
@@ -79,11 +79,11 @@ func loadEnv() (*config, error) {
 
 	to := strings.Split(os.Getenv("TO"), ",")
 
-	return &config{
-		from:     os.Getenv("FROM"),
-		to:       to,
-		password: os.Getenv("PASSWORD"),
-		host:     os.Getenv("HOST"),
-		port:     port,
+	return &Config{
+		From:     os.Getenv("FROM"),
+		To:       to,
+		Password: os.Getenv("PASSWORD"),
+		Host:     os.Getenv("HOST"),
+		Port:     port,
 	}, nil
 }

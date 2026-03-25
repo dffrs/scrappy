@@ -1,8 +1,8 @@
-package internal
+package scraper
 
 import (
 	"scrappy/internal/database"
-	"scrappy/types"
+	"scrappy/internal/types"
 )
 
 func SaveProducts(products []types.Product, models database.Models) ([]types.Product, error) {
@@ -24,9 +24,6 @@ func SaveProducts(products []types.Product, models database.Models) ([]types.Pro
 			return nil, err
 		}
 
-		// get today's history
-		// get yesterday's history
-		// if yesterday > today => send email
 		todays, err := models.History.GetLatest(productID)
 		if err != nil {
 			return nil, err

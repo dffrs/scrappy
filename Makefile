@@ -21,4 +21,4 @@ fmt: clean
 vet: fmt
 				go vet ./...
 build: vet
-				go build -o bin/scrappy cmd/scrappy.go
+				go build -o bin/scrappy cmd/scrappy/main.go
