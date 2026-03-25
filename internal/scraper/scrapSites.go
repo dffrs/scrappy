@@ -3,7 +3,7 @@ package scraper
 import "scrappy/internal/types"
 
 func ScrapSites(scrapees map[string]types.Scrapees) ([]types.Product, error) {
-	p := make([]types.Product, 0, 100)
+	p := make([]types.Product, 0)
 
 	for _, scrapee := range scrapees {
 		products, err := scrapee.Run()

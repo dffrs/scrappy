@@ -10,7 +10,6 @@ import (
 	"scrappy/internal/database"
 	"scrappy/internal/mail"
 	"scrappy/internal/scraper"
-	"scrappy/internal/types"
 )
 
 func main() {
@@ -23,21 +22,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	scrapees := map[string]types.Scrapees{
-		"simlab":          scraper.NewSimlab(),
-		"nextlevelracing": scraper.NewNextLevelRacing(),
-		"gtomega":         scraper.NewGTOmega(),
-	}
-
-	products, err := scraper.ScrapSites(scrapees)
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
-	}
-
-	models := database.NewModels(db)
-
-	cheaperProducts, err := scraper.SaveProducts(products, models)
+	cheaperProducts, err := scraper.NewScraper(db).Run()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
