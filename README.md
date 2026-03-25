@@ -155,3 +155,10 @@ scrapees := map[string]types.Scrapees{
 | `0`  | Success — email sent             |
 | `1`  | Error                            |
 | `2`  | No price drops — nothing to send |
+
+
+## TODO
+
+- [ ] Code clean up
+- [ ] Show old price on email
+- [ ] Make websites to be scrapped configurable
