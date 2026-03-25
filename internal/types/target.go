@@ -7,6 +7,11 @@ type Product struct {
 	URL   string  `json:"url"`
 }
 
+type ProductChanged struct {
+	Product
+	Cheaper bool
+}
+
 type Scrapees interface {
 	Run() ([]Product, error)
 }

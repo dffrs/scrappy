@@ -17,7 +17,7 @@ type Mail struct {
 	port     int
 	to       []string
 	subject  string
-	products []types.Product
+	products []types.ProductChanged
 }
 
 func NewMail() (*Mail, error) {
@@ -42,7 +42,7 @@ func (m *Mail) SetSubject(subject string) *Mail {
 	return m
 }
 
-func (m *Mail) SetProducts(products []types.Product) *Mail {
+func (m *Mail) SetProducts(products []types.ProductChanged) *Mail {
 	m.products = products
 	return m
 }
@@ -66,9 +66,7 @@ func (m *Mail) Send() error {
 		return err
 	}
 
-	err = t.Execute(&body, struct {
-		Products []types.Product
-	}{Products: m.products})
+	err = t.Execute(&body, struct{ Products []types.ProductChanged }{Products: m.products})
 	if err != nil {
 		return err
 	}

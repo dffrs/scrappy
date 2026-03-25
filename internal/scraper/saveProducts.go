@@ -5,8 +5,8 @@ import (
 	"scrappy/internal/types"
 )
 
-func getCheaperProducts(products []types.Product, models database.Models) ([]types.Product, error) {
-	var cheaperProducts []types.Product
+func getCheaperProducts(products []types.Product, models database.Models) ([]types.ProductChanged, error) {
+	var cheaperProducts []types.ProductChanged
 
 	for _, product := range products {
 		siteID, err := models.Site.GetOrCreate(product.Site)
@@ -41,9 +41,14 @@ func getCheaperProducts(products []types.Product, models database.Models) ([]typ
 			continue
 		}
 
-		if yesterdays.Price > todays.Price {
-			cheaperProducts = append(cheaperProducts, product)
+		difference := yesterdays.Price - todays.Price
+
+		if difference < 0 {
+			cheaperProducts = append(cheaperProducts, types.ProductChanged{Product: product, Cheaper: false})
+		} else if difference > 0 {
+			cheaperProducts = append(cheaperProducts, types.ProductChanged{Product: product, Cheaper: true})
 		}
+
 	}
 
 	return cheaperProducts, nil

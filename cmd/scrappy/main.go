@@ -22,14 +22,14 @@ func main() {
 		os.Exit(1)
 	}
 
-	cheaperProducts, err := scraper.NewScraper(db).Run()
+	changedProducts, err := scraper.NewScraper(db).Run()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 
-	if len(cheaperProducts) < 1 {
-		fmt.Println("No price drop detected")
+	if len(changedProducts) < 1 {
+		fmt.Println("No price changes detected")
 		os.Exit(2)
 	}
 
@@ -39,7 +39,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	err = m.SetSubject("Price Drop Detected").SetProducts(cheaperProducts).Send()
+	err = m.SetSubject("Price Drop Detected").SetProducts(changedProducts).Send()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)

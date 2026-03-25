@@ -23,7 +23,7 @@ func NewScraper(db *sql.DB) *Scraper {
 	}
 }
 
-func (s *Scraper) Run() ([]types.Product, error) {
+func (s *Scraper) Run() ([]types.ProductChanged, error) {
 	products, err := scrapSites(s.scrapees)
 	if err != nil {
 		return nil, err
