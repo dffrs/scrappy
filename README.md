@@ -22,24 +22,32 @@ Designed to run once per day via a cron job.
 ```
 scrappy/
 ├── cmd/
-│   ├── scrappy.go              # Entry point
+│   ├── scrappy/                # Entry point
+│   │   └── main.go
 │   └── migrate/                # DB migration CLI
 │       └── migrations/         # SQL up/down files
 ├── internal/
-│   ├── simlab.go               # Scraper: sim-lab.eu
-│   ├── gtomega.go              # Scraper: gtomega.eu
-│   ├── nextlevelracing.go      # Scraper: nextlevelracing.com
-│   ├── scrapSites.go           # Runs all scrapers
-│   ├── saveProducts.go         # Persists to DB + detects price drops
-│   ├── extractPrice.go         # Parses price strings
-│   ├── mail.go                 # Builds and sends the email
-│   ├── env.go                  # Loads config from scrappy.env
-│   ├── saveAsJson.go           # Debug helper: dump products to JSON
-│   └── database/               # SQLite models (site, product, history)
-├── types/
-│   └── target.go               # Shared types: Product, Scrapees interface
+│   ├── database/               # SQLite models
+│   │   ├── history.go
+│   │   ├── models.go
+│   │   ├── openDB.go
+│   │   ├── product.go
+│   │   └── site.go
+│   ├── mail/                   # Email handling
+│   │   ├── config.go
+│   │   └── mail.go
+│   ├── scraper/                # Scraper modules
+│   │   ├── extractPrice.go
+│   │   ├── gtomega.go
+│   │   ├── nextlevelracing.go
+│   │   ├── saveProducts.go
+│   │   ├── scraper.go
+│   │   ├── scrapSites.go
+│   │   └── simlab.go
+│   └── types/                  # Shared types
+│       └── target.go
 ├── assets/
-│   └── template.html           # HTML email template
+│   └── template.html          # HTML email template
 └── Makefile
 ```
 
@@ -159,6 +167,6 @@ scrapees := map[string]types.Scrapees{
 
 ## TODO
 
-- [ ] Code clean up
+- [X] Code clean up
 - [ ] Show old price on email
 - [ ] Make websites to be scrapped configurable
