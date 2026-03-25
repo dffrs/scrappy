@@ -24,9 +24,9 @@ func NewScraper(db *sql.DB) *Scraper {
 }
 
 func (s *Scraper) Run() ([]types.Product, error) {
-	products, err := ScrapSites(s.scrapees)
+	products, err := scrapSites(s.scrapees)
 	if err != nil {
 		return nil, err
 	}
-	return SaveProducts(products, s.models)
+	return getCheaperProducts(products, s.models)
 }

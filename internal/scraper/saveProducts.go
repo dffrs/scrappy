@@ -5,7 +5,7 @@ import (
 	"scrappy/internal/types"
 )
 
-func SaveProducts(products []types.Product, models database.Models) ([]types.Product, error) {
+func getCheaperProducts(products []types.Product, models database.Models) ([]types.Product, error) {
 	var cheaperProducts []types.Product
 
 	for _, product := range products {
