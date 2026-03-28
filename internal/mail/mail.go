@@ -2,6 +2,7 @@ package mail
 
 import (
 	"bytes"
+	_ "embed"
 	"errors"
 	"fmt"
 	"html/template"
@@ -9,6 +10,9 @@ import (
 
 	"scrappy/internal/types"
 )
+
+//go:embed template.html
+var templateHTML string
 
 type Mail struct {
 	from     string
@@ -61,7 +65,7 @@ func (m *Mail) Send() error {
 	}
 
 	var body bytes.Buffer
-	t, err := template.ParseFiles("assets/template.html")
+	t, err := template.ParseFiles(templateHTML)
 	if err != nil {
 		return err
 	}
