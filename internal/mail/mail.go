@@ -65,7 +65,7 @@ func (m *Mail) Send() error {
 	}
 
 	var body bytes.Buffer
-	t, err := template.ParseFiles(templateHTML)
+	t, err := template.New("email").Parse(templateHTML)
 	if err != nil {
 		return err
 	}
