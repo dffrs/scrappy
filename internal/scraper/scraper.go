@@ -28,5 +28,5 @@ func (s *Scraper) Run() ([]types.ProductChanged, error) {
 	if err != nil {
 		return nil, err
 	}
-	return getCheaperProducts(products, s.models)
+	return detectPriceChanges(products, s.models)
 }

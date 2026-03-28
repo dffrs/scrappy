@@ -5,7 +5,7 @@ import (
 	"scrappy/internal/types"
 )
 
-func getCheaperProducts(products []types.Product, models database.Models) ([]types.ProductChanged, error) {
+func detectPriceChanges(products []types.Product, models database.Models) ([]types.ProductChanged, error) {
 	var cheaperProducts []types.ProductChanged
 
 	for _, product := range products {
