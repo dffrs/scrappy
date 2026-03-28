@@ -44,9 +44,9 @@ func detectPriceChanges(products []types.Product, models database.Models) ([]typ
 		difference := yesterdays.Price - todays.Price
 
 		if difference < 0 {
-			cheaperProducts = append(cheaperProducts, types.ProductChanged{Product: product, Cheaper: false})
+			cheaperProducts = append(cheaperProducts, types.ProductChanged{Product: product, Cheaper: false, OldPrice: yesterdays.Price})
 		} else if difference > 0 {
-			cheaperProducts = append(cheaperProducts, types.ProductChanged{Product: product, Cheaper: true})
+			cheaperProducts = append(cheaperProducts, types.ProductChanged{Product: product, Cheaper: true, OldPrice: yesterdays.Price})
 		}
 
 	}

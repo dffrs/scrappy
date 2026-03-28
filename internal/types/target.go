@@ -10,7 +10,8 @@ type Product struct {
 
 type ProductChanged struct {
 	Product
-	Cheaper bool
+	Cheaper  bool
+	OldPrice float32
 }
 
 type Scrapees interface {

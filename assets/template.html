@@ -87,7 +87,7 @@
                             style="
                               font-size: 16px;
                               font-weight: 5500;
-                              max-width: 15ch;
+                              max-width: 12ch;
                               white-space: nowrap;
                               overflow: hidden;
                               text-overflow: ellipsis;
@@ -109,7 +109,21 @@
                               color: #2ecc71;
                             "
                           >
-                            € {{.Price}}
+                            <span
+                              style="
+                                text-decoration: line-through;
+                                font-style: italic;
+                                font-size: x-small;
+                                color: darkgray;
+                                padding-inline: 5px;
+                              "
+                              >€{{.OldPrice}}</span
+                            >
+                            {{if .Cheaper}}
+                            <span style="color: #2ecc71">€{{.Price}}</span>
+                            {{else}}
+                            <span style="color: #e74c3c">€{{.Price}}</span>
+                            {{end}}
                           </td>
                         </tr>
                       </table>
