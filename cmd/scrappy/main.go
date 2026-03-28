@@ -39,7 +39,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	err = m.SetSubject("Price Drop Detected").SetProducts(changedProducts).Send()
+	err = m.SetSubject("Price Change Detected").SetProducts(changedProducts).Send()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
