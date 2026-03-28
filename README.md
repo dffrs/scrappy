@@ -127,7 +127,7 @@ On the first run, scrappy will populate the database with current prices — no 
 ## Makefile targets
 
 | Target         | Description                             |
-|----------------|-----------------------------------------|
+| -------------- | --------------------------------------- |
 | `make build`   | Format → vet → compile to `bin/scrappy` |
 | `make upDB`    | Apply migrations (create tables)        |
 | `make downDB`  | Roll back migrations (drop tables)      |
@@ -159,15 +159,14 @@ scrapees := map[string]types.Scrapees{
 ## Exit codes
 
 | Code | Meaning                          |
-|------|----------------------------------|
+| ---- | -------------------------------- |
 | `0`  | Success — email sent             |
 | `1`  | Error                            |
 | `2`  | No price drops — nothing to send |
 
-
 ## TODO
 
-- [X] Code clean up
-- [ ] Show old price on email
-- [ ] Instead of detecting price drops, detect price changes - this way price increases would be flagged
+- [x] Code clean up
+- [x] Show old price on email
+- [x] Instead of detecting price drops, detect price changes - this way price increases would be flagged
 - [ ] Make websites to be scrapped configurable
