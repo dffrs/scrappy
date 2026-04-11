@@ -22,7 +22,13 @@ func main() {
 		os.Exit(1)
 	}
 
-	changedProducts, err := scraper.NewScraper(db).Run()
+	scrapees, err := scraper.GetScrapees("./config-example.json")
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+
+	changedProducts, err := scraper.NewScraper(db, scrapees).Run()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
