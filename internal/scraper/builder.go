@@ -82,16 +82,16 @@ func (cn Config) getPrice(e *colly.HTMLElement) (float32, error) {
 }
 
 func (cn Config) getURL(e *colly.HTMLElement) string {
-	var url string
-	if cn.ProductURLPath == "" {
-		url = cn.Page
-	} else if cn.URLWithSite {
-		url = fmt.Sprintf("%s%s", cn.Site, e.ChildAttr(cn.ProductURLPath, "href"))
-	} else {
-		url = e.ChildAttr(cn.ProductURLPath, "href")
-	}
+	switch {
+	case cn.ProductURLPath == "":
+		return cn.Page
 
-	return url
+	case cn.URLWithSite:
+		return fmt.Sprintf("%s%s", cn.Site, e.ChildAttr(cn.ProductURLPath, "href"))
+
+	default:
+		return e.ChildAttr(cn.ProductURLPath, "href")
+	}
 }
 
 func (cn Config) Run() ([]types.Product, error) {
