@@ -1,20 +1,23 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"os"
 
 	_ "github.com/mattn/go-sqlite3"
 
 	"scrappy/internal/database"
+	"scrappy/internal/flags"
 	"scrappy/internal/mail"
 	"scrappy/internal/scraper"
 )
 
 func main() {
-	dbPath := flag.String("db", "./data.db", "path to sqlite database")
-	flag.Parse()
+	dbPath, configPath, err := flags.Parse()
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
 
 	db, err := database.OpenDB(*dbPath)
 	if err != nil {
@@ -22,7 +25,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	scrapees, err := scraper.GetScrapees("./config-example.json")
+	scrapees, err := scraper.GetScrapees(*configPath)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
