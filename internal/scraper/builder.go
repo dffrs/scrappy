@@ -72,9 +72,7 @@ func (cn Config) headlessBrowser() (*string, error) {
 func (cn Config) Run() ([]types.Product, error) {
 	cockspits := make([]types.Product, 0)
 
-	c := colly.NewCollector(
-		colly.CacheDir("./cache/nextLevelRacing"),
-	)
+	c := colly.NewCollector()
 
 	if cn.WaitFor != "" {
 		htmlContent, err := cn.headlessBrowser()
