@@ -70,11 +70,20 @@ func (cn Config) headlessBrowser() (*string, error) {
 }
 
 func (cn Config) getName(e *colly.HTMLElement) string {
-	return strings.TrimSpace(e.ChildText(cn.ProductNamePath))
-}
+	if cn.ProductNamePath == "" {
+		return "[Unknown-product-name]"
+	}
 
-func (cn Config) getDesc(e *colly.HTMLElement) string {
-	return strings.TrimSpace(e.ChildText(cn.ProductDescPath))
+	name := strings.Split(strings.TrimSpace(e.ChildText(cn.ProductNamePath)), "\n")[0]
+	desc := strings.Split(strings.TrimSpace(e.ChildText(cn.ProductDescPath)), "\n")[0]
+
+	// NOTE: Will this be the case for every product ??
+	hasDesc := desc != ""
+	if hasDesc {
+		name = fmt.Sprintf("%s - %s", name, desc)
+	}
+
+	return name
 }
 
 func (cn Config) getPrice(e *colly.HTMLElement) (float32, error) {
@@ -110,26 +119,17 @@ func (cn Config) Run() ([]types.Product, error) {
 		})
 	}
 
-	// TODO: have fallbacks for every property
 	c.OnHTML(cn.ContainerPath, func(e *colly.HTMLElement) {
 		price, err := cn.getPrice(e)
 		if err != nil {
 			panic(err)
 		}
-		url := cn.getURL(e)
-		name := cn.getName(e)
-		desc := cn.getDesc(e)
-
-		// NOTE: Will this be the case for every product ??
-		if desc != "" {
-			name = fmt.Sprintf("%s - %s", name, desc)
-		}
 
 		cockspits = append(cockspits, types.Product{
-			Name:  name,
 			Price: price,
 			Site:  cn.Site,
-			URL:   url,
+			Name:  cn.getName(e),
+			URL:   cn.getURL(e),
 		})
 	})
 
