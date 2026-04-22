@@ -12,14 +12,10 @@ type Scraper struct {
 	models   database.Models
 }
 
-func NewScraper(db *sql.DB) *Scraper {
+func NewScraper(db *sql.DB, scrappees map[string]types.Scrapees) *Scraper {
 	return &Scraper{
-		scrapees: map[string]types.Scrapees{
-			"simlab":          NewSimlab(),
-			"nextlevelracing": NewNextLevelRacing(),
-			"gtomega":         NewGTOmega(),
-		},
-		models: database.NewModels(db),
+		scrapees: scrappees,
+		models:   database.NewModels(db),
 	}
 }
 
