@@ -69,6 +69,31 @@ func (cn Config) headlessBrowser() (*string, error) {
 	return &htmlContent, nil
 }
 
+func (cn Config) getName(e *colly.HTMLElement) string {
+	return strings.TrimSpace(e.ChildText(cn.ProductNamePath))
+}
+
+func (cn Config) getDesc(e *colly.HTMLElement) string {
+	return strings.TrimSpace(e.ChildText(cn.ProductDescPath))
+}
+
+func (cn Config) getPrice(e *colly.HTMLElement) (float32, error) {
+	return extractPrice(strings.TrimSpace(e.ChildText(cn.ProductPricePath)))
+}
+
+func (cn Config) getURL(e *colly.HTMLElement) string {
+	var url string
+	if cn.ProductURLPath == "" {
+		url = cn.Page
+	} else if cn.URLWithSite {
+		url = fmt.Sprintf("%s%s", cn.Site, e.ChildAttr(cn.ProductURLPath, "href"))
+	} else {
+		url = e.ChildAttr(cn.ProductURLPath, "href")
+	}
+
+	return url
+}
+
 func (cn Config) Run() ([]types.Product, error) {
 	cockspits := make([]types.Product, 0)
 
@@ -87,25 +112,17 @@ func (cn Config) Run() ([]types.Product, error) {
 
 	// TODO: have fallbacks for every property
 	c.OnHTML(cn.ContainerPath, func(e *colly.HTMLElement) {
-		name := strings.TrimSpace(e.ChildText(cn.ProductNamePath))
-		desc := strings.TrimSpace(e.ChildText(cn.ProductDescPath))
-
-		if desc != "" {
-			name = fmt.Sprintf("%s - %s", name, desc)
-		}
-
-		price, err := extractPrice(strings.TrimSpace(e.ChildText(cn.ProductPricePath)))
+		price, err := cn.getPrice(e)
 		if err != nil {
 			panic(err)
 		}
+		url := cn.getURL(e)
+		name := cn.getName(e)
+		desc := cn.getDesc(e)
 
-		var url string
-		if cn.ProductURLPath == "" {
-			url = cn.Page
-		} else if cn.URLWithSite {
-			url = fmt.Sprintf("%s%s", cn.Site, e.ChildAttr(cn.ProductURLPath, "href"))
-		} else {
-			url = e.ChildAttr(cn.ProductURLPath, "href")
+		// NOTE: Will this be the case for every product ??
+		if desc != "" {
+			name = fmt.Sprintf("%s - %s", name, desc)
 		}
 
 		cockspits = append(cockspits, types.Product{
