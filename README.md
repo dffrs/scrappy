@@ -1,8 +1,6 @@
 # scrappy
 
-> ⚠️ Work in progress
-
-A Go application that monitors sim-racing cockpit prices across a few websites, tracks price history, and sends an email alert whenever a price drops.
+A Go application that monitors product prices across configurable websites, tracks price history, and sends an email alert whenever a price drops.
 
 Designed to run once per day via a cron job.
 
@@ -10,7 +8,7 @@ Designed to run once per day via a cron job.
 
 ## How it works
 
-1. Scrapes product listings from Simlab, GT Omega, and Next Level Racing
+1. Scrapes product listings from configurable websites (defined in a JSON file)
 2. Saves each product and its current price to SQLite
 3. Compares today's price with the last recorded one
 4. If any prices dropped → sends an email alert
@@ -35,19 +33,18 @@ scrappy/
 │   │   └── site.go
 │   ├── mail/                   # Email handling
 │   │   ├── config.go
-│   │   └── mail.go
+│   │   ├── mail.go
+│   │   └── template.html
 │   ├── scraper/                # Scraper modules
+│   │   ├── builder.go
 │   │   ├── extractPrice.go
-│   │   ├── gtomega.go
-│   │   ├── nextlevelracing.go
 │   │   ├── saveProducts.go
 │   │   ├── scraper.go
-│   │   ├── scrapSites.go
-│   │   └── simlab.go
+│   │   └── scrapSites.go
 │   └── types/                  # Shared types
 │       └── target.go
 ├── assets/
-│   └── template.html          # HTML email template
+│   └── config-example.json    # Example config file
 └── Makefile
 ```
 
@@ -57,7 +54,7 @@ scrappy/
 
 - Go 1.26+
 - GCC (required by `go-sqlite3` via CGO)
-- Chrome or Chromium (required by the GT Omega scraper)
+- Chrome or Chromium (only if `waitFor` is set in config)
 
 ---
 
@@ -90,11 +87,34 @@ PORT=587
 
 Gmail is supported. Use `smtp.gmail.com` as the host, port `587`, and an [App Password](https://support.google.com/accounts/answer/185833) instead of your regular account password.
 
-### 3. Build and run
+### 3. Configure the websites to scrape
+
+Copy the example config and edit it to define which websites to track:
+
+```bash
+cp assets/config-example.json my-scrapees.json
+```
+
+The config defines each website to scrape:
+
+- `name` — unique identifier
+- `site` — base URL
+- `page` — product listing page
+- CSS selectors:
+  - `containerPath` — product card container
+  - `productNamePath` — product name
+  - `productDescPath` — product description (optional)
+  - `productPricePath` — product price
+  - `productURLPath` — product link
+- Optional:
+  - `urlWithSite` — prepend base URL to links
+  - `waitFor` — CSS selector to wait for before scraping (uses headless Chrome)
+
+### 4. Build and run
 
 ```bash
 make build
-./bin/scrappy
+./bin/scrappy --db data.db --cf my-scrapees.json
 ```
 
 ---
@@ -104,14 +124,14 @@ make build
 Once set up, run it manually:
 
 ```bash
-./bin/scrappy
+./bin/scrappy --db data.db --cf my-scrapees.json
 ```
 
 Or schedule it as a daily cron job:
 
 ```bash
 # Runs every day at 08:00
-0 8 * * * /path/to/scrappy/bin/scrappy
+0 8 * * * /path/to/scrappy/bin/scrappy --db /path/to/data.db --cf /path/to/my-scrapees.json
 ```
 
 On the first run, scrappy will populate the database with current prices — no email will be sent since there's no previous price to compare against. From the second run onwards, it will start detecting drops.
@@ -132,27 +152,6 @@ On the first run, scrappy will populate the database with current prices — no 
 | `make upDB`    | Apply migrations (create tables)        |
 | `make downDB`  | Roll back migrations (drop tables)      |
 | `make resetDB` | Full schema wipe and recreate           |
-
----
-
-## Adding a scraper
-
-Implement the `Scrapees` interface and register it in `cmd/scrappy.go`:
-
-```go
-type MyNewSite struct{}
-
-func (m MyNewSite) Run() ([]types.Product, error) {
-    // scrape and return products
-}
-```
-
-```go
-scrapees := map[string]types.Scrapees{
-    // ...existing scrapers...
-    "mynewsite": internal.MyNewSite{},
-}
-```
 
 ---
 
