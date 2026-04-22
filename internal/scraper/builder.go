@@ -29,20 +29,35 @@ type Config struct {
 
 func GetScrapees(path string) (map[string]types.Scrapees, error) {
 	// open file
-	f, err := os.ReadFile(path) // TODO: use scanner
+	f, err := os.Open(path)
 	if err != nil {
 		return nil, err
 	}
-
-	var content []Config
-	err = json.Unmarshal(f, &content)
-	if err != nil {
-		return nil, err
-	}
+	defer func() {
+		_ = f.Close()
+	}()
 
 	result := make(map[string]types.Scrapees)
-	for _, scr := range content {
-		result[scr.Name] = scr
+
+	// Stream the file's content, and decode into a 'Config' object, one at a time
+	decoder := json.NewDecoder(f)
+
+	t, err := decoder.Token()
+	if err != nil {
+		return nil, err
+	}
+
+	if t != json.Delim('[') {
+		return nil, fmt.Errorf("error reading config: expected array start")
+	}
+
+	for decoder.More() {
+		var conf Config
+		if err := decoder.Decode(&conf); err != nil {
+			return nil, err
+		}
+
+		result[conf.Name] = conf
 	}
 
 	return result, nil
